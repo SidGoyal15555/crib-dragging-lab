@@ -1,63 +1,660 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An interactive educational lab demonstrating crib dragging and the two-time-pad vulnerability using XOR.">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="description"
+    content="An interactive educational lab demonstrating crib dragging and the two-time-pad vulnerability using XOR."
+  >
+
   <title>Crib Dragging Lab | Cryptography Playground</title>
+
   <style>
-    :root{--ink:#29324a;--body:#482b3c;--pink:#d64e91;--coral:#d94f54;--blue:#278bcb;--purple:#7956bd;--mint:#dff3e8;--sky:#e3f2fc;--lav:#f0e9fc;--peach:#fce9e3;--gold:#fff1d6;--paper:#fff9f6;--muted:#667085}
-    *{box-sizing:border-box} body{margin:0;background:linear-gradient(135deg,#fff9f6,#f4f8ff 55%,#f8f2ff);color:var(--body);font:16px/1.65 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
-    a{color:inherit}.wrap{max-width:1120px;margin:auto;padding:28px 22px 60px}.nav{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:58px}.brand{font-weight:800;color:var(--ink);letter-spacing:-.03em}.nav a{font-size:.92rem;text-decoration:none;color:var(--muted)}
-    .hero{position:relative;overflow:hidden;border-radius:28px;padding:58px 54px;background:linear-gradient(115deg,#263d70,#5668b8 55%,#b45b9b);color:white;box-shadow:0 18px 48px #29324a20}.eyebrow{text-transform:uppercase;letter-spacing:.16em;font-size:.75rem;font-weight:800;color:#ffd5e8}.hero h1{font-size:clamp(2.5rem,6vw,4.7rem);line-height:1.04;letter-spacing:-.055em;margin:14px 0}.hero p{max-width:680px;color:#edf1ff;font-size:1.15rem}.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}.btn{display:inline-block;padding:12px 19px;border-radius:999px;text-decoration:none;font-weight:800}.primary{background:#fff;color:#344574}.secondary{border:1px solid #ffffff88;color:#fff}.formula{position:absolute;right:35px;bottom:28px;font-size:1.2rem;color:#ffffffb8;font-weight:700}
-    section{margin-top:54px}.section-kicker{color:var(--pink);font-size:.76rem;letter-spacing:.15em;font-weight:900;text-transform:uppercase}h2{color:var(--ink);font-size:2rem;letter-spacing:-.035em;margin:5px 0 12px}.lead{max-width:760px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:17px;margin-top:22px}.card{background:#ffffffd9;border:1px solid #e7e5ee;border-radius:19px;padding:22px;box-shadow:0 8px 24px #29324a08}.card h3{margin:0 0 7px;color:var(--ink);font-size:1.08rem}.card p{margin:0;color:var(--muted);font-size:.94rem}.tag{display:inline-block;padding:4px 10px;border-radius:99px;font-size:.75rem;font-weight:800;margin-bottom:12px}.blue{background:var(--sky);color:var(--blue)}.pink{background:var(--peach);color:var(--coral)}.purple{background:var(--lav);color:var(--purple)}
-    .equation{background:var(--gold);border-radius:18px;padding:25px;text-align:center;color:var(--ink);font-size:clamp(1.35rem,3vw,2rem);font-weight:900;letter-spacing:.02em;margin-top:22px}.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:22px}.step{background:#fff;border:1px solid #e7e5ee;border-radius:16px;padding:17px}.step b{display:block;color:var(--pink);font-size:.8rem}.step strong{display:block;color:var(--ink);margin:5px 0}.step span{font-size:.86rem;color:var(--muted)}
-    .launch{background:linear-gradient(120deg,var(--mint),var(--sky));border-radius:23px;padding:30px;display:flex;justify-content:space-between;align-items:center;gap:24px}.launch h2{margin-top:0}.launch p{margin-bottom:0;color:var(--muted)}.launch .btn{background:var(--ink);color:white;white-space:nowrap}.note{font-size:.88rem;color:var(--muted);margin-top:12px}.footer{margin-top:60px;padding-top:22px;border-top:1px solid #e7e5ee;color:var(--muted);font-size:.88rem;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
-    @media(max-width:800px){.grid{grid-template-columns:1fr 1fr}.steps{grid-template-columns:1fr 1fr}.hero{padding:40px 28px}.formula{position:static;margin-top:24px}.launch{display:block}.launch .btn{margin-top:18px}}@media(max-width:520px){.grid,.steps{grid-template-columns:1fr}.nav{margin-bottom:30px}.hero{border-radius:20px}.wrap{padding-inline:16px}}
+    :root {
+      --ink: #29324a;
+      --body: #482b3c;
+      --pink: #d64e91;
+      --coral: #d94f54;
+      --blue: #278bcb;
+      --purple: #7956bd;
+      --mint: #dff3e8;
+      --sky: #e3f2fc;
+      --lav: #f0e9fc;
+      --peach: #fce9e3;
+      --gold: #fff1d6;
+      --paper: #fff9f6;
+      --muted: #667085;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(
+        135deg,
+        #fff9f6,
+        #f4f8ff 55%,
+        #f8f2ff
+      );
+      color: var(--body);
+      font: 16px/1.65 Inter, ui-sans-serif,
+        system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: auto;
+      padding: 28px 22px 60px;
+    }
+
+    /* Navigation */
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 58px;
+    }
+
+    .brand {
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.03em;
+    }
+
+    .nav a {
+      font-size: 0.92rem;
+      text-decoration: none;
+      color: var(--muted);
+    }
+
+    /* Hero section */
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      padding: 58px 54px;
+      background: linear-gradient(
+        115deg,
+        #263d70,
+        #5668b8 55%,
+        #b45b9b
+      );
+      color: white;
+      box-shadow: 0 18px 48px #29324a20;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #ffd5e8;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.7rem);
+      line-height: 1.04;
+      letter-spacing: -0.055em;
+      margin: 14px 0;
+    }
+
+    .hero p {
+      max-width: 680px;
+      color: #edf1ff;
+      font-size: 1.15rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 28px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 12px 19px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 800;
+      transition: transform 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .primary {
+      background: #fff;
+      color: #344574;
+    }
+
+    .secondary {
+      border: 1px solid #ffffff88;
+      color: #fff;
+    }
+
+    .formula {
+      position: absolute;
+      right: 35px;
+      bottom: 28px;
+      font-size: 1.2rem;
+      color: #ffffffb8;
+      font-weight: 700;
+    }
+
+    /* General sections */
+
+    section {
+      margin-top: 54px;
+    }
+
+    .section-kicker {
+      color: var(--pink);
+      font-size: 0.76rem;
+      letter-spacing: 0.15em;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      color: var(--ink);
+      font-size: 2rem;
+      letter-spacing: -0.035em;
+      margin: 5px 0 12px;
+    }
+
+    .lead {
+      max-width: 760px;
+      color: var(--muted);
+    }
+
+    /* Feature cards */
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 17px;
+      margin-top: 22px;
+    }
+
+    .card {
+      background: #ffffffd9;
+      border: 1px solid #e7e5ee;
+      border-radius: 19px;
+      padding: 22px;
+      box-shadow: 0 8px 24px #29324a08;
+    }
+
+    .card h3 {
+      margin: 0 0 7px;
+      color: var(--ink);
+      font-size: 1.08rem;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .blue {
+      background: var(--sky);
+      color: var(--blue);
+    }
+
+    .pink {
+      background: var(--peach);
+      color: var(--coral);
+    }
+
+    .purple {
+      background: var(--lav);
+      color: var(--purple);
+    }
+
+    /* XOR equation */
+
+    .equation {
+      background: var(--gold);
+      border-radius: 18px;
+      padding: 25px;
+      text-align: center;
+      color: var(--ink);
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      font-weight: 900;
+      letter-spacing: 0.02em;
+      margin-top: 22px;
+    }
+
+    /* Attack workflow */
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .step {
+      background: #fff;
+      border: 1px solid #e7e5ee;
+      border-radius: 16px;
+      padding: 17px;
+    }
+
+    .step b {
+      display: block;
+      color: var(--pink);
+      font-size: 0.8rem;
+    }
+
+    .step strong {
+      display: block;
+      color: var(--ink);
+      margin: 5px 0;
+    }
+
+    .step span {
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    /* Launch section */
+
+    .launch {
+      background: linear-gradient(
+        120deg,
+        var(--mint),
+        var(--sky)
+      );
+      border-radius: 23px;
+      padding: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .launch h2 {
+      margin-top: 0;
+    }
+
+    .launch p {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .launch .btn {
+      background: var(--ink);
+      color: white;
+      white-space: nowrap;
+    }
+
+    .note {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    /* Footer */
+
+    .footer {
+      margin-top: 60px;
+      padding-top: 22px;
+      border-top: 1px solid #e7e5ee;
+      color: var(--muted);
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive design */
+
+    @media (max-width: 800px) {
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .steps {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .hero {
+        padding: 40px 28px;
+      }
+
+      .formula {
+        position: static;
+        margin-top: 24px;
+      }
+
+      .launch {
+        display: block;
+      }
+
+      .launch .btn {
+        margin-top: 18px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .grid,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .nav {
+        margin-bottom: 30px;
+      }
+
+      .hero {
+        border-radius: 20px;
+      }
+
+      .wrap {
+        padding-inline: 16px;
+      }
+    }
   </style>
 </head>
+
 <body>
+
   <main class="wrap">
-    <nav class="nav"><div class="brand">🔐 CRIB DRAGGING LAB</div><a href="https://github.com/">GitHub</a></nav>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="brand">
+        🔐 CRIB DRAGGING LAB
+      </div>
+
+      <a
+        href="https://github.com/SidGoyal15555/crib-dragging-lab"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        GitHub Repository ↗
+      </a>
+    </nav>
+
+    <!-- Hero section -->
     <header class="hero">
-      <div class="eyebrow">Interactive cryptography playground</div>
-      <h1>See why a reused<br>one-time pad fails.</h1>
-      <p>Explore the two-time-pad vulnerability through XOR visualisation, sliding plaintext guesses, automated candidate ranking and partial key recovery.</p>
-      <div class="actions"><a class="btn primary" href="https://YOUR-APP-NAME.streamlit.app" target="_blank" rel="noopener">Launch interactive lab ↗</a><a class="btn secondary" href="https://github.com/">View source code ↗</a></div>
-      <div class="formula">C₁ ⊕ C₂ = M₁ ⊕ M₂</div>
+
+      <div class="eyebrow">
+        Interactive cryptography playground
+      </div>
+
+      <h1>
+        See why a reused<br>
+        one-time pad fails.
+      </h1>
+
+      <p>
+        Explore the two-time-pad vulnerability through XOR
+        visualisation, sliding plaintext guesses, automated
+        candidate ranking and partial key recovery.
+      </p>
+
+      <div class="actions">
+
+        <!-- Streamlit application -->
+        <a
+          class="btn primary"
+          href="https://crib-dragging-lab.streamlit.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Launch interactive lab ↗
+        </a>
+
+        <!-- GitHub source code -->
+        <a
+          class="btn secondary"
+          href="https://github.com/SidGoyal15555/crib-dragging-lab"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View source code ↗
+        </a>
+
+      </div>
+
+      <div class="formula">
+        C₁ ⊕ C₂ = M₁ ⊕ M₂
+      </div>
+
     </header>
+
+    <!-- Core idea -->
     <section>
-      <div class="section-kicker">The core idea</div><h2>One reused keystream. Two exposed messages.</h2>
-      <p class="lead">When two plaintexts are encrypted with the same XOR key, XORing their ciphertexts cancels the key and reveals the XOR of the plaintexts. A guessed fragment—a crib—can then be tested at different positions.</p>
-      <div class="equation">C₁ ⊕ C₂ = (M₁ ⊕ K) ⊕ (M₂ ⊕ K) = M₁ ⊕ M₂</div>
+
+      <div class="section-kicker">
+        The core idea
+      </div>
+
+      <h2>
+        One reused keystream. Two exposed messages.
+      </h2>
+
+      <p class="lead">
+        When two plaintexts are encrypted with the same XOR key,
+        XORing their ciphertexts cancels the key and reveals the
+        XOR of the plaintexts. A guessed fragment—a crib—can then
+        be tested at different positions.
+      </p>
+
+      <div class="equation">
+        C₁ ⊕ C₂ = (M₁ ⊕ K) ⊕ (M₂ ⊕ K) = M₁ ⊕ M₂
+      </div>
+
     </section>
+
+    <!-- Features -->
     <section>
-      <div class="section-kicker">Explore the lab</div><h2>What you can investigate</h2>
+
+      <div class="section-kicker">
+        Explore the lab
+      </div>
+
+      <h2>
+        What you can investigate
+      </h2>
+
       <div class="grid">
-        <article class="card"><span class="tag blue">01 · Encrypt</span><h3>Encryption lab</h3><p>Encrypt two equal-length messages with one demonstration key and inspect the resulting ciphertexts.</p></article>
-        <article class="card"><span class="tag purple">02 · Visualise</span><h3>XOR visualizer</h3><p>Inspect the byte-level relationship between both ciphertexts and their plaintexts.</p></article>
-        <article class="card"><span class="tag pink">03 · Attack</span><h3>Crib dragging</h3><p>Slide a guessed word or phrase across the combined ciphertext and inspect candidate outputs.</p></article>
-        <article class="card"><span class="tag blue">04 · Automate</span><h3>Candidate ranking</h3><p>Evaluate possible offsets and rank them using a simple educational scoring heuristic.</p></article>
-        <article class="card"><span class="tag purple">05 · Recover</span><h3>Key recovery</h3><p>Recover the key bytes corresponding to a known plaintext fragment and decrypt the matching region.</p></article>
-        <article class="card"><span class="tag pink">06 · Learn</span><h3>Code architecture</h3><p>Explore the Python modules, separation of concerns, scoring abstraction and unit tests.</p></article>
+
+        <article class="card">
+          <span class="tag blue">01 · Encrypt</span>
+          <h3>Encryption lab</h3>
+          <p>
+            Encrypt two equal-length messages with one
+            demonstration key and inspect the resulting ciphertexts.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="tag purple">02 · Visualise</span>
+          <h3>XOR visualizer</h3>
+          <p>
+            Inspect the byte-level relationship between both
+            ciphertexts and their plaintexts.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="tag pink">03 · Attack</span>
+          <h3>Crib dragging</h3>
+          <p>
+            Slide a guessed word or phrase across the combined
+            ciphertext and inspect candidate outputs.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="tag blue">04 · Automate</span>
+          <h3>Candidate ranking</h3>
+          <p>
+            Evaluate possible offsets and rank them using a
+            simple educational scoring heuristic.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="tag purple">05 · Recover</span>
+          <h3>Key recovery</h3>
+          <p>
+            Recover the key bytes corresponding to a known
+            plaintext fragment and decrypt the matching region.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="tag pink">06 · Learn</span>
+          <h3>Code architecture</h3>
+          <p>
+            Explore the Python modules, separation of concerns,
+            scoring abstraction and unit tests.
+          </p>
+        </article>
+
       </div>
+
     </section>
+
+    <!-- Attack workflow -->
     <section>
-      <div class="section-kicker">Attack workflow</div><h2>From ciphertext to readable text</h2>
-      <div class="steps">
-        <div class="step"><b>STEP 01</b><strong>Collect C₁, C₂</strong><span>Both were encrypted with the same key.</span></div>
-        <div class="step"><b>STEP 02</b><strong>Combine</strong><span>Compute Z = C₁ ⊕ C₂.</span></div>
-        <div class="step"><b>STEP 03</b><strong>Guess a crib</strong><span>Try a likely word or phrase.</span></div>
-        <div class="step"><b>STEP 04</b><strong>Slide and inspect</strong><span>Test each valid byte offset.</span></div>
-        <div class="step"><b>STEP 05</b><strong>Recover bytes</strong><span>Use K = C ⊕ M where plaintext is known.</span></div>
+
+      <div class="section-kicker">
+        Attack workflow
       </div>
+
+      <h2>
+        From ciphertext to readable text
+      </h2>
+
+      <div class="steps">
+
+        <div class="step">
+          <b>STEP 01</b>
+          <strong>Collect C₁, C₂</strong>
+          <span>Both were encrypted with the same key.</span>
+        </div>
+
+        <div class="step">
+          <b>STEP 02</b>
+          <strong>Combine</strong>
+          <span>Compute Z = C₁ ⊕ C₂.</span>
+        </div>
+
+        <div class="step">
+          <b>STEP 03</b>
+          <strong>Guess a crib</strong>
+          <span>Try a likely word or phrase.</span>
+        </div>
+
+        <div class="step">
+          <b>STEP 04</b>
+          <strong>Slide and inspect</strong>
+          <span>Test each valid byte offset.</span>
+        </div>
+
+        <div class="step">
+          <b>STEP 05</b>
+          <strong>Recover bytes</strong>
+          <span>Use K = C ⊕ M where plaintext is known.</span>
+        </div>
+
+      </div>
+
     </section>
+
+    <!-- Launch application -->
     <section class="launch">
-      <div><div class="section-kicker">Try it yourself</div><h2>Open the interactive lab</h2><p>Run the Streamlit app to change messages, move cribs and inspect candidate results.</p></div>
-      <a class="btn" href="https://crib-dragging-lab.streamlit.app" target="_blank" rel="noopener">Launch lab ↗</a>
+
+      <div>
+        <div class="section-kicker">
+          Try it yourself
+        </div>
+
+        <h2>
+          Open the interactive lab
+        </h2>
+
+        <p>
+          Run the Streamlit app to change messages, move cribs
+          and inspect candidate results.
+        </p>
+      </div>
+
+      <div class="actions">
+
+        <a
+          class="btn"
+          href="https://crib-dragging-lab.streamlit.app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Launch lab ↗
+        </a>
+
+        <a
+          class="btn"
+          href="https://github.com/SidGoyal15555/crib-dragging-lab"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View source code ↗
+        </a>
+
+      </div>
+
     </section>
-    <p class="note"><strong>Educational use only:</strong> this project intentionally reuses a key to demonstrate the vulnerability. It is not a secure encryption application. Never reuse a one-time pad or a stream-cipher key/nonce pair.</p>
-    <footer class="footer"><span>Crib Dragging Lab · Python + Streamlit</span><span>Built for cryptography learning and demonstration</span></footer>
+
+    <!-- Security note -->
+    <p class="note">
+      <strong>Educational use only:</strong>
+      This project intentionally reuses a key to demonstrate
+      the vulnerability. It is not a secure encryption application.
+      Never reuse a one-time pad or a stream-cipher key/nonce pair.
+    </p>
+
+    <!-- Footer -->
+    <footer class="footer">
+
+      <span>
+        Crib Dragging Lab · Python + Streamlit
+      </span>
+
+      <span>
+        Built for cryptography learning and demonstration
+      </span>
+
+    </footer>
+
   </main>
+
 </body>
 </html>
